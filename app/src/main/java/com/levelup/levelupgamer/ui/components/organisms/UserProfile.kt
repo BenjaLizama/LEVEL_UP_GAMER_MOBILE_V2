@@ -1,4 +1,4 @@
-package com.levelup.levelupgamer.ui.components
+package com.levelup.levelupgamer.ui.components.organisms
 
 import android.net.Uri
 import androidx.compose.foundation.clickable

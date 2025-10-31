@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
@@ -32,7 +31,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.levelup.levelupgamer.navigation.ROUTES
-import com.levelup.levelupgamer.ui.components.CustomOutlinedTextField
+import com.levelup.levelupgamer.ui.components.atoms.CustomOutlinedTextField
 import com.levelup.levelupgamer.ui.theme.ColorFondo
 import com.levelup.levelupgamer.ui.theme.ColorTextoPrincipal
 import com.levelup.levelupgamer.viewmodel.autenticacion.AutenticacionViewModel

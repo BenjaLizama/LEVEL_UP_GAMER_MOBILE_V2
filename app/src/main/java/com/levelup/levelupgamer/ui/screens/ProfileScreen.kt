@@ -20,7 +20,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.levelup.levelupgamer.ui.components.UserProfile
+import com.levelup.levelupgamer.ui.components.organisms.UserProfile
 import com.levelup.levelupgamer.ui.theme.ColorFondo
 import com.levelup.levelupgamer.utils.crearUriTemporal
 import com.levelup.levelupgamer.viewmodel.profile.ProfileViewModel
@@ -30,15 +30,13 @@ fun ProfileScreen(
     controladorNavegacion: NavHostController,
     viewModel: ProfileViewModel = hiltViewModel()
 ) {
-    // 1. Obtener el contexto y observar estados
     val context = LocalContext.current
     val nombre by viewModel.nombreUsuario.collectAsState()
     val apellido by viewModel.apellidoUsuario.collectAsState()
     val correo by viewModel.correoUsuario.collectAsState()
     val imagen by viewModel.imagenUri.collectAsState()
-    val mostrarDialogo by viewModel.mostrarDialogoImagen.collectAsState() // Observar el estado del diálogo
+    val mostrarDialogo by viewModel.mostrarDialogoImagen.collectAsState()
 
-    // 2. Preparar URI Temporal y Launchers
     val uriParaCamara = remember { crearUriTemporal(context) }
 
     val galeriaLauncher = rememberLauncherForActivityResult(
@@ -46,7 +44,7 @@ fun ProfileScreen(
         onResult = { uri ->
             viewModel.setMostrarDialogoImagen(false)
             if (uri != null) {
-                viewModel.actualizarImagenPerfil(uri) // Guarda la Uri de la Galería
+                viewModel.actualizarImagenPerfil(uri)
             }
         }
     )
@@ -56,7 +54,6 @@ fun ProfileScreen(
         onResult = { exito ->
             viewModel.setMostrarDialogoImagen(false)
             if (exito) {
-                // Guarda la Uri temporal SÓLO si la foto fue exitosa
                 viewModel.actualizarImagenPerfil(uriParaCamara)
             }
         }
@@ -66,11 +63,9 @@ fun ProfileScreen(
         contract = ActivityResultContracts.RequestPermission(),
         onResult = { isGranted ->
             if (isGranted) {
-                // ❌ ANTES: val uriParaCamara = remember { crearUriTemporal(context) }
-                // ✅ DESPUÉS: Usar la variable que ya tienes
                 camaraLauncher.launch(uriParaCamara)
             } else {
-                // Manejar la negación
+                // Manejar el caso en que el usuario niega el permiso
             }
         }
     )
@@ -82,7 +77,7 @@ fun ProfileScreen(
             .padding(padding)
         ) {
             UserProfile(nombre, apellido, correo, imagen, onImagenClick = {
-                viewModel.setMostrarDialogoImagen(true) // 👈 DISPARA EL DIÁLOGO
+                viewModel.setMostrarDialogoImagen(true)
             })
         }
     }
@@ -93,30 +88,24 @@ fun ProfileScreen(
             title = { Text("Cambiar Imagen de Perfil") },
             text = { Text("Selecciona la fuente para tu nueva imagen.") },
 
-            // 🚨 CAMBIO DE ESTRUCTURA: Usamos los botones para Cámara y Galería
             confirmButton = {
-                // --- BOTÓN GALERÍA ---
                 TextButton(
                     onClick = {
-                        viewModel.setMostrarDialogoImagen(false) // Cerrar diálogo
-                        galeriaLauncher.launch("image/*") // Lanzar Galería
+                        viewModel.setMostrarDialogoImagen(false)
+                        galeriaLauncher.launch("image/*")
                     }
                 ) { Text("Galería") }
             },
             dismissButton = {
-                // --- BOTÓN CÁMARA (Lógica de Permisos) ---
                 TextButton(
                     onClick = {
-                        viewModel.setMostrarDialogoImagen(false) // Cerrar diálogo
+                        viewModel.setMostrarDialogoImagen(false)
 
-                        // ✅ CORRECCIÓN 1: Lógica de permisos de Cámara
                         when (ContextCompat.checkSelfPermission(context, android.Manifest.permission.CAMERA)) {
                             PackageManager.PERMISSION_GRANTED -> {
-                                // Si el permiso está OK, lanzar directamente
                                 camaraLauncher.launch(uriParaCamara)
                             }
                             else -> {
-                                // Si el permiso NO está, solicitarlo.
                                 permisoCamaraLauncher.launch(android.Manifest.permission.CAMERA)
                             }
                         }

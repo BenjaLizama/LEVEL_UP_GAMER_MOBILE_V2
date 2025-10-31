@@ -1,4 +1,4 @@
-package com.levelup.levelupgamer.ui.components
+package com.levelup.levelupgamer.ui.components.organisms
 
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -19,7 +19,7 @@ fun BottomNavBar(navController: NavHostController) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val rutaActual = navBackStackEntry?.destination?.route
 
-    NavigationBar (
+    NavigationBar(
         containerColor = ColorBarraNavegacion
     ) {
         itemsNavegacion.forEach { item ->
