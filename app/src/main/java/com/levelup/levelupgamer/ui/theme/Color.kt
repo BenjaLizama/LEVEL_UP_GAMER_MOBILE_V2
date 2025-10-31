@@ -12,7 +12,7 @@ val Pink40 = Color(0xFF7D5260)
 
 // Mis colores
 val ColorFondo = Color(0xFF081127)
-val ColorBarraNavegacion = Color(0x40010101)
+val ColorBarraNavegacion = Color(0xFF020915)
 val ColorAcento = Color(0xFF1e90ff)
 val ColorTextoPrincipal = Color(0xFFFFFFFF)
 val ColorTextoSecundario = Color(0xFFeeeeee)
