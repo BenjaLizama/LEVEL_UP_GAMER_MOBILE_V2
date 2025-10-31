@@ -54,6 +54,12 @@ class PreferenciasUsuarioRepository @Inject constructor(
         }
     }
 
+    suspend fun limpiarDatos() {
+        dataStore.edit { preferencias ->
+            preferencias.clear()
+        }
+    }
+
     // ---- Leer valores ----
 
     val estaLogueado: Flow<Boolean> = dataStore.data

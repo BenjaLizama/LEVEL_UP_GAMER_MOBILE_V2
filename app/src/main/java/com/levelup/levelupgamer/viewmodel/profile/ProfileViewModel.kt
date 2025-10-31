@@ -5,19 +5,28 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.levelup.levelupgamer.data.PreferenciasUsuarioRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
+sealed class EventoPerfilUi {
+    object NavigateToLogin : EventoPerfilUi()
+}
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     private val preferenciasRepository: PreferenciasUsuarioRepository
 ) : ViewModel() {
+
+    private val _eventoUi = Channel<EventoPerfilUi>()
+    val eventoUi = _eventoUi.receiveAsFlow()
 
     private val _mostrarDialogoImagen = MutableStateFlow(false)
     val mostrarDialogoImagen: StateFlow<Boolean> = _mostrarDialogoImagen.asStateFlow()
@@ -26,6 +35,13 @@ class ProfileViewModel @Inject constructor(
 
     fun setMostrarDialogoImagen(mostrar: Boolean) {
         _mostrarDialogoImagen.value = mostrar
+    }
+
+    fun cerrarSesion() {
+        viewModelScope.launch {
+            preferenciasRepository.limpiarDatos()
+            _eventoUi.send(EventoPerfilUi.NavigateToLogin)
+        }
     }
 
     val imagenUri: StateFlow<Uri?> = preferenciasRepository.imagenPerfil

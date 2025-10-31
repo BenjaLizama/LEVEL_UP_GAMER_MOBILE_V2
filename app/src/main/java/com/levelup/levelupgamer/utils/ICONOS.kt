@@ -22,4 +22,5 @@ object ICONOS {
     val Shop: ImageVector = Icons.Filled.ShoppingBasket
     val Cart: ImageVector = Icons.Filled.ShoppingCart
     val Profile: ImageVector = Icons.Filled.Person
+    val SignOut: ImageVector = Icons.Filled.ExitToApp
 }

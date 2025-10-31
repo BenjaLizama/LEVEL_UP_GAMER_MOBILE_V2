@@ -1,5 +1,6 @@
 package com.levelup.levelupgamer.ui.components.molecules
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -16,20 +17,29 @@ import com.levelup.levelupgamer.ui.components.atoms.SimpleIcon
 import com.levelup.levelupgamer.ui.theme.ColorTextoPrincipal
 import com.levelup.levelupgamer.utils.ICONOS
 
+
+data class PerfilOpcion(
+    val icono: ImageVector,
+    val texto: String,
+    val onClick: () -> Unit
+)
+
 @Composable
 fun ProfileOption(
     icono: ImageVector,
     texto: String,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(
         modifier = Modifier
             .padding(vertical = 5.dp)
+            .clickable { onClick() },
     ) {
         Row (
             modifier = modifier
                 .fillMaxWidth()
-                .padding(horizontal = 10.dp, vertical = 5.dp),
+                .padding(vertical = 5.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
