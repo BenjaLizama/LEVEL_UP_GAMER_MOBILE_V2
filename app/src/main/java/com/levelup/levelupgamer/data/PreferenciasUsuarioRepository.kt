@@ -16,15 +16,17 @@ class PreferenciasUsuarioRepository @Inject constructor(
     private val dataStore: DataStore<Preferences>
 ) {
     private object LlavesPreferencia {
-        val ESTA_LOGEADO = booleanPreferencesKey("esta_logeado")
+        val ESTA_LOGUEADO = booleanPreferencesKey("esta_logeado")
         val NOMBRE_USUARIO = stringPreferencesKey("nombre_usuario")
+        val APELLIDO_USAURIO = stringPreferencesKey("apellido_usuario")
+        val CORREO_USUARIO = stringPreferencesKey("correo_usuario")
     }
 
     // ---- Guardar valores ----
 
-    suspend fun guardarEstadoLogeado(estaLogeado: Boolean) {
+    suspend fun guardarEstadoLogueado(estaLogeado: Boolean) {
         dataStore.edit { preferencias ->
-            preferencias[LlavesPreferencia.ESTA_LOGEADO] = estaLogeado
+            preferencias[LlavesPreferencia.ESTA_LOGUEADO] = estaLogeado
         }
     }
 
@@ -34,15 +36,37 @@ class PreferenciasUsuarioRepository @Inject constructor(
         }
     }
 
+    suspend fun guardarApellidoUsuario(apellidoUsuario: String) {
+        dataStore.edit { preferencias ->
+            preferencias[LlavesPreferencia.APELLIDO_USAURIO] = apellidoUsuario
+        }
+    }
+
+    suspend fun guardarCorreoUsuario(correoUsuario: String) {
+        dataStore.edit { preferencias ->
+            preferencias[LlavesPreferencia.CORREO_USUARIO] = correoUsuario
+        }
+    }
+
     // ---- Leer valores ----
 
-    val estaLogeado: Flow<Boolean> = dataStore.data
+    val estaLogueado: Flow<Boolean> = dataStore.data
         .map { preferencias ->
-            preferencias[LlavesPreferencia.ESTA_LOGEADO] ?: false
+            preferencias[LlavesPreferencia.ESTA_LOGUEADO] ?: false
         }
 
     val nombreUsuario: Flow<String> = dataStore.data
         .map { preferencias ->
             preferencias[LlavesPreferencia.NOMBRE_USUARIO] ?: ""
+        }
+
+    val apellidoUsuario: Flow<String> = dataStore.data
+        .map { preferencias ->
+            preferencias[LlavesPreferencia.APELLIDO_USAURIO] ?: ""
+        }
+
+    val correoUsuario: Flow<String> = dataStore.data
+        .map { preferencias ->
+            preferencias[LlavesPreferencia.CORREO_USUARIO] ?: ""
         }
 }

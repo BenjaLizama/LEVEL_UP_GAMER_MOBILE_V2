@@ -3,6 +3,7 @@ package com.levelup.levelupgamer.viewmodel.autenticacion
 import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.levelup.levelupgamer.data.PreferenciasUsuarioRepository
 import com.levelup.levelupgamer.db.entidades.Usuario
 import com.levelup.levelupgamer.db.repository.UsuarioRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,7 +17,8 @@ import java.lang.Exception
 
 @HiltViewModel
 class AutenticacionViewModel @Inject constructor(
-    private val usuarioRepository: UsuarioRepository
+    private val usuarioRepository: UsuarioRepository,
+    private val preferenciasRepository: PreferenciasUsuarioRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(EstadoFormularioUI())
@@ -51,8 +53,11 @@ class AutenticacionViewModel @Inject constructor(
                     return@launch
                 }
 
-                val id = usuarioRepository.crearCuenta(nuevoUsuario)
-                _uiState.update { it.copy(isLoading = false) }
+                preferenciasRepository.guardarNombreUsuario(nuevoUsuario.nombre)
+                preferenciasRepository.guardarApellidoUsuario(nuevoUsuario.apellido)
+                preferenciasRepository.guardarCorreoUsuario(nuevoUsuario.correo)
+                preferenciasRepository.guardarEstadoLogueado(true)
+
                 _creacionExitosa.value = true
 
             } catch (e: Exception) {
@@ -85,6 +90,13 @@ class AutenticacionViewModel @Inject constructor(
                     ) }
                     return@launch
                 }
+
+                val usuario = usuarioRepository.obtenerUsuarioPorCorreo(_uiState.value.correoInicio)
+
+                preferenciasRepository.guardarNombreUsuario(usuario?.nombre ?: "")
+                preferenciasRepository.guardarApellidoUsuario(usuario?.apellido ?: "")
+                preferenciasRepository.guardarCorreoUsuario(usuario?.correo ?: "")
+                preferenciasRepository.guardarEstadoLogueado(true)
 
                 _inicioExitoso.value = true
 

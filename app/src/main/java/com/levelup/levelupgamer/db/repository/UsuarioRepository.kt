@@ -19,6 +19,16 @@ class UsuarioRepository @Inject constructor(
         return usuarioDAO.obtenerUsuarioPorCorreo(correo) != null
     }
 
+    suspend fun obtenerUsuarioPorCorreo(correo: String): Usuario? {
+        val usuario = usuarioDAO.obtenerUsuarioPorCorreo(correo)
+
+        if (usuario == null) {
+            return null
+        }
+
+        return usuario
+    }
+
     suspend fun validarCredenciales(correo: String, contrasenaIngresada: String): Boolean {
         val usuario = usuarioDAO.obtenerUsuarioPorCorreo(correo)
 
