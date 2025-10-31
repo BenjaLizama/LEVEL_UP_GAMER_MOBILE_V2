@@ -1,7 +1,6 @@
 package com.levelup.levelupgamer.di
 
 import android.content.Context
-import androidx.room.Database
 import androidx.room.Room
 import com.levelup.levelupgamer.db.BaseDatos
 import com.levelup.levelupgamer.db.dao.UsuarioDAO
@@ -31,6 +30,6 @@ object ModuloBaseDatos {
     @Provides
     @Singleton
     fun proveerUsuarioDAO(basedatos: BaseDatos): UsuarioDAO {
-        return basedatos.usuarioDao()
+        return basedatos.getUsuarioDao()
     }
 }

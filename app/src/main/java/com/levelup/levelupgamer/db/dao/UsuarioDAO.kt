@@ -9,9 +9,18 @@ import com.levelup.levelupgamer.db.entidades.Usuario
 interface UsuarioDAO {
 
     @Query("SELECT * FROM tabla_usuario")
-    fun obtenerTodosLosUsuarios(): MutableList<Usuario>
+    suspend fun obtenerTodosLosUsuarios(): MutableList<Usuario>
 
     @Insert
-    fun agregarUsuario(usuario: Usuario): Long
+    suspend fun agregarUsuario(usuario: Usuario): Long
+
+    @Query("SELECT * FROM tabla_usuario WHERE correo = :correo")
+    suspend fun obtenerUsuarioPorCorreo(correo: String): Usuario?
+
+    @Query("SELECT * FROM tabla_usuario WHERE idUsuario = :idUsuario")
+    suspend fun obtenerUsuarioPorId(idUsuario: Long): Usuario?
+
+    @Query("SELECT * FROM TABLA_USUARIO WHERE correo = :correo AND contrasena = :contrasena")
+    suspend fun obtenerUsuarioPorCredenciales(correo: String, contrasena: String): Usuario?
 
 }

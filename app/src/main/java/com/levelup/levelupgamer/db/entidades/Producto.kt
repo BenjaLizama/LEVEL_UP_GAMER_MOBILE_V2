@@ -3,12 +3,12 @@ package com.levelup.levelupgamer.db.entidades
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "TABLA_USUARIO")
-data class Usuario(
+@Entity(tableName = "TABLA_PRODUCTO")
+data class Producto (
     @PrimaryKey(autoGenerate = true)
-    val idUsuario: Long,
+    val id: Long,
     val nombre: String,
-    val apellido: String,
-    val correo: String,
-    val contrasena: String,
+    val descripcion: String,
+    val imagenURL: String,
+    val precio: Double
 )
