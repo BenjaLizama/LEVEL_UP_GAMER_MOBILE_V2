@@ -36,6 +36,7 @@ import com.levelup.levelupgamer.ui.components.CustomOutlinedTextField
 import com.levelup.levelupgamer.ui.theme.ColorFondo
 import com.levelup.levelupgamer.ui.theme.ColorTextoPrincipal
 import com.levelup.levelupgamer.viewmodel.autenticacion.AutenticacionViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
@@ -68,9 +69,10 @@ fun SignUpScreen(
             scope.launch {
                 snackbarHostState.showSnackbar(
                     message = "Cuenta creada exitosamente",
-                    duration = SnackbarDuration.Short
+                    duration = SnackbarDuration.Long
                 )
             }
+            delay(1000)
             controladorNavegacion.navigate(ROUTES.TIENDA)
         }
     }
@@ -80,7 +82,7 @@ fun SignUpScreen(
             scope.launch {
                 snackbarHostState.showSnackbar(
                     message = mensaje,
-                    duration = SnackbarDuration.Short
+                    duration = SnackbarDuration.Long
                 )
             }
         }
