@@ -1,4 +1,4 @@
-package com.levelup.levelupgamer.ui.navigation
+package com.levelup.levelupgamer.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost

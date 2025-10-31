@@ -1,4 +1,4 @@
-package com.levelup.levelupgamer.ui.navigation
+package com.levelup.levelupgamer.navigation
 
 import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -9,7 +9,7 @@ import androidx.navigation.navigation
 import com.levelup.levelupgamer.ui.screens.LoginScreen
 import com.levelup.levelupgamer.ui.screens.SignUpScreen
 
-import com.levelup.levelupgamer.viewmodel.AutenticacionViewModel
+import com.levelup.levelupgamer.viewmodel.autenticacion.AutenticacionViewModel
 
 
 fun NavGraphBuilder.authGraph(controladorNavegacion: NavHostController) {

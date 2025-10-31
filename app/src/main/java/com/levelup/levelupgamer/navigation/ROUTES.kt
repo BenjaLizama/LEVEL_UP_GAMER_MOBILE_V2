@@ -1,4 +1,4 @@
-package com.levelup.levelupgamer.ui.navigation
+package com.levelup.levelupgamer.navigation
 
 object ROUTES {
     const val AUTENTICACION = "autenticacion"
