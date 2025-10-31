@@ -8,6 +8,9 @@ data class EstadoFormularioUI(
     val contrasena: String = "",
     val confirmarContrasena: String = "",
 
+    val correoInicio: String = "",
+    val contrasenaInicio: String = "",
+
     // Errores
     val nombreError: String? = null,
     val apellidoError: String? = null,
@@ -15,8 +18,12 @@ data class EstadoFormularioUI(
     val contrasenaError: String? = null,
     val confirmarContrasenaError: String? = null,
 
+    val correoErrorInicio: String? = null,
+    val contrasenaErrorInicio: String? = null,
+
     // Estados globales
     val isLoading: Boolean = false,
     val creacionExitosa: Boolean = false,
+    val inicioExitoso: Boolean = false,
     val mensajeError: String? = null
 )

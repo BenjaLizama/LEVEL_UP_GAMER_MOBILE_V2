@@ -63,12 +63,42 @@ class AutenticacionViewModel @Inject constructor(
         }
     }
 
+    fun iniciarSesion() {
+        viewModelScope.launch {
+            try {
+
+                val estado = _uiState.value
+                _uiState.update { it.copy(isLoading = true) }
+
+                if (!validarFormularioInicio()) {
+                    _uiState.update { it.copy(
+                        mensajeError = "Por favor, corrige los errores en el formulario."
+                    ) }
+                    return@launch
+                }
+
+                val esValido = usuarioRepository.validarCredenciales(estado.correoInicio, estado.contrasenaInicio)
+
+                if (!esValido) {
+                    _uiState.update { it.copy(
+                        mensajeError = "La contraseña o el correo son incorrectos."
+                    ) }
+                    return@launch
+                }
+
+                _inicioExitoso.value = true
+
+            } catch (e: kotlin.Exception) {
+                _uiState.update { it.copy(mensajeError = "Error al iniciar sesion.") }
+            } finally {
+                _uiState.update { it.copy(isLoading = false) }
+            }
+        }
+    }
+
     fun validarFormulario(): Boolean {
         _uiState.update {
             it.copy(
-                nombreError = null,
-                apellidoError = null,
-                correoError = null,
                 contrasenaError = null,
                 confirmarContrasenaError = null
             )
@@ -77,37 +107,21 @@ class AutenticacionViewModel @Inject constructor(
         var esValido = true
         val estado = _uiState.value
 
-
-        if (estado.nombre.isBlank() || estado.nombre.length < 3) {
-            _uiState.update { it.copy(nombreError = "Mínimo 3 caracteres.") }
-            esValido = false
-        }
-
-        if (estado.apellido.trim().isBlank() || estado.apellido.trim().length < 3) {
-            _uiState.update { it.copy(apellidoError = "Mínimo 3 caracteres.") }
-            esValido = false
-        }
-
-        if (estado.correo.trim().isBlank()) {
-            _uiState.update { it.copy(correoError = "El correo no puede estar vacío.") }
-            esValido = false
-        }
-        else if (!Patterns.EMAIL_ADDRESS.matcher(estado.correo).matches()) {
-            _uiState.update { it.copy(correoError = "Formato de correo inválido.") }
-            esValido = false
-        }
-
         if (estado.contrasena.trim().isBlank() || estado.contrasena.trim().length < 6) {
             _uiState.update { it.copy(contrasenaError = "Mínimo 6 caracteres.") }
             esValido = false
         }
 
-        if (estado.confirmarContrasena != estado.contrasena) {
+        if (estado.confirmarContrasena.trim().isBlank()) {
+            _uiState.update { it.copy(confirmarContrasenaError = "El campo no puede estar vacío.") }
+            esValido = false
+        }
+        else if (estado.confirmarContrasena != estado.contrasena) {
             _uiState.update { it.copy(confirmarContrasenaError = "Las contraseñas no coinciden.") }
             esValido = false
         }
-        else if (estado.confirmarContrasena.trim().isBlank()) {
-            _uiState.update { it.copy(confirmarContrasenaError = "El campo no puede estar vacío.") }
+
+        if (estado.nombreError != null || estado.apellidoError != null || estado.correoError != null) {
             esValido = false
         }
 
@@ -115,16 +129,62 @@ class AutenticacionViewModel @Inject constructor(
         return esValido
     }
 
+    fun validarFormularioInicio(): Boolean {
+        _uiState.update {
+            it.copy(
+                correoErrorInicio = null,
+                contrasenaErrorInicio = null,
+            )
+        }
+
+        var esValido = true
+        val estado = _uiState.value
+
+        if (estado.contrasenaInicio.trim().isBlank() || estado.contrasenaInicio.trim().length < 6) {
+            _uiState.update { it.copy(contrasenaErrorInicio = "Mínimo 6 caracteres.") }
+            esValido = false
+        }
+
+        if (estado.correoErrorInicio != null || estado.contrasenaErrorInicio != null ) {
+            esValido = false
+        }
+
+        return esValido
+    }
+
     fun actualizarNombre(nuevoNombre: String) {
-        _uiState.update { it.copy(nombre = nuevoNombre) }
+        _uiState.update {
+            it.copy(
+                nombre = nuevoNombre,
+                nombreError = if (nuevoNombre.isBlank() || nuevoNombre.length < 3)
+                    "Mínimo 3 caracteres."
+                else null
+            )
+        }
     }
 
     fun actualizarApellido(nuevoApellido: String) {
-        _uiState.update { it.copy(apellido = nuevoApellido) }
+        _uiState.update {
+            it.copy(
+                apellido = nuevoApellido,
+                apellidoError = if (nuevoApellido.trim().isBlank() || nuevoApellido.trim().length < 3)
+                    "Mínimo 3 caracteres."
+                else null
+            )
+        }
     }
 
     fun actualizarCorreo(nuevoCorreo: String) {
-        _uiState.update { it.copy(correo = nuevoCorreo) }
+        _uiState.update {
+            it.copy(
+                correo = nuevoCorreo,
+                correoError = when {
+                    nuevoCorreo.trim().isBlank() -> "El correo no puede estar vacío."
+                    !Patterns.EMAIL_ADDRESS.matcher(nuevoCorreo).matches() -> "Formato de correo inválido."
+                    else -> null
+                }
+            )
+        }
     }
 
     fun actualizarContrasena(nuevaContrasena: String) {
@@ -135,8 +195,26 @@ class AutenticacionViewModel @Inject constructor(
         _uiState.update { it.copy(confirmarContrasena = nuevaConfirmarContrasena) }
     }
 
+    fun actualizarCorreoInicio(nuevoCorreo: String) {
+        _uiState.update {it.copy(
+            correoInicio = nuevoCorreo,
+            correoErrorInicio = when {
+                nuevoCorreo.trim().isBlank() -> "El correo no puede estar vacío."
+                !Patterns.EMAIL_ADDRESS.matcher(nuevoCorreo).matches() -> "Formato de correo inválido."
+                else -> null
+            }
+        ) }
+    }
+
+    fun actualizarContrasenaInicio(nuevaContrasena: String) {
+        _uiState.update { it.copy(contrasenaInicio = nuevaContrasena) }
+    }
+
     private val _creacionExitosa =
         MutableStateFlow(false) // => Almacena el valor y emite actualizaciones
     val creacionExitosa: StateFlow<Boolean> = _creacionExitosa.asStateFlow() // => Expone StateFlow publico para la UI
+
+    private val _inicioExitoso = MutableStateFlow(false)
+    val inicioExitoso: StateFlow<Boolean> = _inicioExitoso.asStateFlow()
 
 }
