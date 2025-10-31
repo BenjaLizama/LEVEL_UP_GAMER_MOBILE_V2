@@ -1,6 +1,5 @@
 package com.levelup.levelupgamer.data
 
-import androidx.compose.foundation.lazy.layout.LazyLayout
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
@@ -18,8 +17,9 @@ class PreferenciasUsuarioRepository @Inject constructor(
     private object LlavesPreferencia {
         val ESTA_LOGUEADO = booleanPreferencesKey("esta_logeado")
         val NOMBRE_USUARIO = stringPreferencesKey("nombre_usuario")
-        val APELLIDO_USAURIO = stringPreferencesKey("apellido_usuario")
+        val APELLIDO_USUARIO = stringPreferencesKey("apellido_usuario")
         val CORREO_USUARIO = stringPreferencesKey("correo_usuario")
+        val IMAGEN_PERFIL = stringPreferencesKey("imagen_perfil")
     }
 
     // ---- Guardar valores ----
@@ -38,13 +38,19 @@ class PreferenciasUsuarioRepository @Inject constructor(
 
     suspend fun guardarApellidoUsuario(apellidoUsuario: String) {
         dataStore.edit { preferencias ->
-            preferencias[LlavesPreferencia.APELLIDO_USAURIO] = apellidoUsuario
+            preferencias[LlavesPreferencia.APELLIDO_USUARIO] = apellidoUsuario
         }
     }
 
     suspend fun guardarCorreoUsuario(correoUsuario: String) {
         dataStore.edit { preferencias ->
             preferencias[LlavesPreferencia.CORREO_USUARIO] = correoUsuario
+        }
+    }
+
+    suspend fun guardarImagenPerfil(imagenPefil: String) {
+        dataStore.edit { preferencias ->
+            preferencias[LlavesPreferencia.IMAGEN_PERFIL] = imagenPefil
         }
     }
 
@@ -62,11 +68,16 @@ class PreferenciasUsuarioRepository @Inject constructor(
 
     val apellidoUsuario: Flow<String> = dataStore.data
         .map { preferencias ->
-            preferencias[LlavesPreferencia.APELLIDO_USAURIO] ?: ""
+            preferencias[LlavesPreferencia.APELLIDO_USUARIO] ?: ""
         }
 
     val correoUsuario: Flow<String> = dataStore.data
         .map { preferencias ->
             preferencias[LlavesPreferencia.CORREO_USUARIO] ?: ""
+        }
+
+    val imagenPerfil: Flow<String> = dataStore.data
+        .map { preferencias ->
+            preferencias[LlavesPreferencia.IMAGEN_PERFIL] ?: ""
         }
 }
