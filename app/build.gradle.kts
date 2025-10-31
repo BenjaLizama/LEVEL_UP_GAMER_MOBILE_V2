@@ -75,4 +75,7 @@ dependencies {
 
     // JbCrypt
     implementation("org.mindrot:jbcrypt:0.4")
+
+    // DataStore
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
 }
