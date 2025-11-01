@@ -1,5 +1,6 @@
 package com.levelup.levelupgamer.ui.screens
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -11,9 +12,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
@@ -29,9 +33,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.levelup.levelupgamer.navigation.ROUTES
 import com.levelup.levelupgamer.ui.components.atoms.CustomOutlinedTextField
+import com.levelup.levelupgamer.ui.theme.ColorAcento
 import com.levelup.levelupgamer.ui.theme.ColorFondo
 import com.levelup.levelupgamer.ui.theme.ColorTextoPrincipal
 import com.levelup.levelupgamer.viewmodel.autenticacion.AutenticacionViewModel
@@ -99,9 +105,12 @@ fun SignUpScreen(
 
             Text(
                 "Crear cuenta",
-                style = MaterialTheme.typography.headlineMedium,
+                style = MaterialTheme.typography.headlineLarge,
+                fontSize = 40.sp,
                 color = ColorTextoPrincipal
             )
+
+            Spacer(Modifier.height(50.dp))
 
             Row {
                 CustomOutlinedTextField(
@@ -168,18 +177,42 @@ fun SignUpScreen(
                     .fillMaxWidth()
             )
 
-            Spacer(modifier = Modifier.height(6.dp))
+            Spacer(modifier = Modifier.height(20.dp))
 
-            Button(
-                onClick = { autenticacionViewModel.crearCuenta() },
-                enabled = !isLoading
-            ) {
-                if (isLoading) CircularProgressIndicator(
-                    modifier = Modifier.size(20.dp),
-                    color = Color.White,
-                    strokeWidth = 2.dp
-                ) else {
-                    Text(text = "Crear cuenta")
+            Row {
+                OutlinedButton (
+                    onClick = { controladorNavegacion.navigate(ROUTES.LOGIN) {
+                        popUpTo(controladorNavegacion.graph.id) {
+                            inclusive = true
+                        }
+                    } },
+                    enabled = true,
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(50.dp),
+                    shape = RoundedCornerShape(8.dp),
+                    border = BorderStroke(2.dp, ColorAcento),
+                ) {
+                    Text("Acceder", color = ColorAcento)
+                }
+
+                Spacer(modifier = Modifier.width(10.dp))
+
+                Button(
+                    onClick = { autenticacionViewModel.crearCuenta() },
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(50.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = ColorAcento
+                    ),
+                    shape = RoundedCornerShape(8.dp)
+                ) {
+                    if (estado.isLoading) {
+                        CircularProgressIndicator(modifier = Modifier.size(24.dp))
+                    } else {
+                        Text("Registrarme")
+                    }
                 }
             }
         }

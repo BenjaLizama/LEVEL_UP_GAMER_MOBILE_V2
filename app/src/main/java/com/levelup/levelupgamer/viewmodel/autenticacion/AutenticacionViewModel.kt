@@ -37,6 +37,15 @@ class AutenticacionViewModel @Inject constructor(
                     return@launch
                 }
 
+                val existe = usuarioRepository.buscarUsuarioPorCorreo(estado.correo)
+
+                if (existe) {
+                    _uiState.update { it.copy(isLoading = false) }
+                    _uiState.update { it.copy(mensajeError = "El correo ya esta registrado.") }
+                    return@launch
+                }
+
+
                 val nuevoUsuario = Usuario(
                     idUsuario = 0L,
                     nombre = estado.nombre,
@@ -44,14 +53,6 @@ class AutenticacionViewModel @Inject constructor(
                     correo = estado.correo,
                     contrasena = estado.contrasena
                 )
-
-                val existe = usuarioRepository.buscarUsuarioPorCorreo(nuevoUsuario.correo)
-
-                if (existe) {
-                    _uiState.update { it.copy(isLoading = false) }
-                    _uiState.update { it.copy(mensajeError = "El correo ya esta registrado.") }
-                    return@launch
-                }
 
                 preferenciasRepository.guardarNombreUsuario(nuevoUsuario.nombre)
                 preferenciasRepository.guardarApellidoUsuario(nuevoUsuario.apellido)

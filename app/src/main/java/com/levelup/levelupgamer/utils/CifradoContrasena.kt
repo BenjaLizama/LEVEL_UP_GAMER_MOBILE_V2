@@ -8,6 +8,9 @@ object CifradoContrasena {
     }
 
     fun verificarContrasena(contrasena: String, contrasenaCifrada: String): Boolean {
+
+
+
         return try {
             BCrypt.checkpw(contrasena, contrasenaCifrada)
         } catch (e: Exception) {
