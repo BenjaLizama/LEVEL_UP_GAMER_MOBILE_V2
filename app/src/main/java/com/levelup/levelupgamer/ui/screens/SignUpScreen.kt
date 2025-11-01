@@ -181,11 +181,7 @@ fun SignUpScreen(
 
             Row {
                 OutlinedButton (
-                    onClick = { controladorNavegacion.navigate(ROUTES.LOGIN) {
-                        popUpTo(controladorNavegacion.graph.id) {
-                            inclusive = true
-                        }
-                    } },
+                    onClick = { controladorNavegacion.navigate(ROUTES.LOGIN) },
                     enabled = true,
                     modifier = Modifier
                         .weight(1f)

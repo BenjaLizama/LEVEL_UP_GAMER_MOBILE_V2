@@ -2,6 +2,7 @@ package com.levelup.levelupgamer.ui.screens
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -101,6 +102,12 @@ fun ProfileScreen(
         }
     }
 
+    LaunchedEffect(key1 = Unit) {
+        viewModel.mensajesToast.collect { mensaje ->
+            Toast.makeText(context, mensaje, Toast.LENGTH_SHORT).show()
+        }
+    }
+
     Scaffold { padding ->
         Column (modifier = Modifier
             .fillMaxSize()
@@ -129,17 +136,17 @@ fun ProfileScreen(
                             PerfilOpcion(
                                 icono = ICONOS.Heart,
                                 texto = "Favoritos",
-                                onClick = { /* TODO: Navegar a la pantalla de compras */ }
+                                onClick = { viewModel.notificarProximamente() }
                             ),
                             PerfilOpcion(
                                 icono = ICONOS.GamePad,
                                 texto = "Biblioteca",
-                                onClick = { /* TODO: Navegar a la pantalla de compras */ }
+                                onClick = { viewModel.notificarProximamente() }
                             ),
                             PerfilOpcion(
                                 icono = ICONOS.Badge,
                                 texto = "Pedidos",
-                                onClick = { /* TODO: Navegar a la pantalla de compras */ }
+                                onClick = { viewModel.notificarProximamente() }
                             )
                         ),
                         texto = "Mi cuenta"
@@ -153,12 +160,12 @@ fun ProfileScreen(
                             PerfilOpcion(
                                 icono = ICONOS.Gift,
                                 texto = "Canjear",
-                                onClick = { /* TODO: Navegar a la pantalla de compras */ }
+                                onClick = { viewModel.notificarProximamente() }
                             ),
                             PerfilOpcion(
                                 icono = ICONOS.Wallet,
                                 texto = "Añadir fondos",
-                                onClick = { /* TODO: Navegar a la pantalla de compras */ }
+                                onClick = { viewModel.notificarProximamente() }
                             )
                         ),
                         texto = "Saldo"
@@ -172,12 +179,12 @@ fun ProfileScreen(
                             PerfilOpcion(
                                 icono = ICONOS.Badge,
                                 texto = "Mi información",
-                                onClick = { /* TODO: Navegar a la pantalla de compras */ }
+                                onClick = { viewModel.notificarProximamente() }
                             ),
                             PerfilOpcion(
                                 icono = ICONOS.Key,
                                 texto = "Cambiar contraseña",
-                                onClick = { /* TODO: Navegar a la pantalla de compras */ }
+                                onClick = { viewModel.notificarProximamente() }
                             )
                         ),
                         texto = "Mi perfil"
@@ -191,7 +198,7 @@ fun ProfileScreen(
                             PerfilOpcion(
                                 icono = ICONOS.Warning,
                                 texto = "Soporte",
-                                onClick = { /* TODO: Navegar a la pantalla de compras */ }
+                                onClick = { viewModel.notificarProximamente() }
                             )
                         ),
                         texto = "Soporte"
@@ -205,12 +212,12 @@ fun ProfileScreen(
                             PerfilOpcion(
                                 icono = ICONOS.Language,
                                 texto = "Idioma",
-                                onClick = { /* TODO: Navegar a la pantalla de compras */ }
+                                onClick = { viewModel.notificarProximamente() }
                             ),
                             PerfilOpcion(
                                 icono = ICONOS.Settings,
                                 texto = "Configuración",
-                                onClick = { /* TODO: Navegar a la pantalla de compras */ }
+                                onClick = { viewModel.notificarProximamente() }
                             ),
                             PerfilOpcion(
                                 icono = ICONOS.SignOut,

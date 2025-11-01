@@ -17,7 +17,7 @@ import com.levelup.levelupgamer.db.entidades.Carrito
        ProductoCategoria::class,
        Carrito::class
    ],
-    version = 2
+    version = 3
 )
 abstract class BaseDatos : RoomDatabase() {
     abstract fun getUsuarioDao(): UsuarioDAO

@@ -9,10 +9,7 @@ class UsuarioRepository @Inject constructor(
     private val usuarioDAO: UsuarioDAO
 ) {
     suspend fun crearCuenta(usuario: Usuario): Long {
-        val contrasenaCifrada = CifradoContrasena.cifrarContrasena(usuario.contrasena)
-        val nuevoUsuario = usuario.copy(contrasena = contrasenaCifrada)
-
-        return usuarioDAO.agregarUsuario(nuevoUsuario)
+        return usuarioDAO.agregarUsuario(usuario)
     }
 
     suspend fun buscarUsuarioPorCorreo(correo: String): Boolean {
@@ -29,17 +26,18 @@ class UsuarioRepository @Inject constructor(
         return usuario
     }
 
-    suspend fun validarCredenciales(correo: String, contrasenaIngresada: String): Boolean {
+    suspend fun validarCredenciales(correo: String, contrasenaIngresada: String): Usuario? {
         val usuario = usuarioDAO.obtenerUsuarioPorCorreo(correo)
 
         if (usuario == null) {
-            return false
+            return null
         }
 
-        val contrasenaCifrada = usuario.contrasena
-        val esValido = CifradoContrasena.verificarContrasena(contrasenaIngresada, contrasenaCifrada)
+        if (usuario.contrasena != contrasenaIngresada) {
+            return null
+        }
 
-        return esValido
+        return usuario
     }
 
 }

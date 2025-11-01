@@ -31,7 +31,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -132,11 +131,7 @@ fun LoginScreen(
 
             Row {
                 OutlinedButton (
-                    onClick = { controladorNavegacion.navigate(ROUTES.SIGN_UP) {
-                        popUpTo(controladorNavegacion.graph.id) {
-                            inclusive = true
-                        }
-                    } },
+                    onClick = { controladorNavegacion.navigate(ROUTES.SIGN_UP) },
                     enabled = true,
                     modifier = Modifier
                         .weight(1f)
@@ -159,7 +154,7 @@ fun LoginScreen(
                     ),
                     shape = RoundedCornerShape(8.dp)
                 ) {
-                    if (estado.isLoading) {
+                    if (isLoading) {
                         CircularProgressIndicator(modifier = Modifier.size(24.dp))
                     } else {
                         Text("Acceder")

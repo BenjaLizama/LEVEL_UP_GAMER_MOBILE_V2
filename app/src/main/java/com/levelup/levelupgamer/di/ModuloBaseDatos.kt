@@ -23,7 +23,7 @@ object ModuloBaseDatos {
             context,
             BaseDatos::class.java,
             "Level Up Gamer"
-        ).build()
+        ).fallbackToDestructiveMigration().build()
     }
 
     // Esto se encarga de proveer el DAO
