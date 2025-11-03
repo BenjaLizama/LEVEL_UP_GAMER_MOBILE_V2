@@ -7,7 +7,7 @@ import com.levelup.levelupgamer.data.PreferenciasUsuarioRepository
 import com.levelup.levelupgamer.db.entidades.Usuario
 import com.levelup.levelupgamer.db.repository.UsuarioRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import jakarta.inject.Inject
+import javax.inject.Inject
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -54,13 +54,16 @@ class AutenticacionViewModel @Inject constructor(
                     correo = estado.correo,
                     contrasena = estado.contrasena
                 )
+                //capturo el id del usuario para cuando se registra
+                val nuevoIdGenerado = usuarioRepository.crearCuenta(nuevoUsuario)
+                preferenciasRepository.guardarIdUsuario(nuevoIdGenerado)
 
                 usuarioRepository.crearCuenta(nuevoUsuario)
-
                 preferenciasRepository.guardarNombreUsuario(nuevoUsuario.nombre)
                 preferenciasRepository.guardarApellidoUsuario(nuevoUsuario.apellido)
                 preferenciasRepository.guardarCorreoUsuario(nuevoUsuario.correo)
                 preferenciasRepository.guardarEstadoLogueado(true)
+
 
                 delay(2500L)
                 _creacionExitosa.value = true
@@ -95,11 +98,13 @@ class AutenticacionViewModel @Inject constructor(
                     ) }
                     return@launch
                 }
-
+                preferenciasRepository.guardarIdUsuario(usuarioValidado.idUsuario)
                 preferenciasRepository.guardarNombreUsuario(usuarioValidado.nombre)
                 preferenciasRepository.guardarApellidoUsuario(usuarioValidado.apellido)
                 preferenciasRepository.guardarCorreoUsuario(usuarioValidado.correo)
                 preferenciasRepository.guardarEstadoLogueado(true)
+
+
 
                 delay(2500L)
                 _inicioExitoso.value = true

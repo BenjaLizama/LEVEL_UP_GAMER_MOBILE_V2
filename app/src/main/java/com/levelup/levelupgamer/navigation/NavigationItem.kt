@@ -16,4 +16,5 @@ val itemsNavegacion = listOf(
     NavigationItem("Tienda", Icons.Filled.Home, "tienda"),
     NavigationItem("Carrito", Icons.Filled.ShoppingCart, "carrito"),
     NavigationItem("Perfil", Icons.Filled.Person, "perfil")
+
 )

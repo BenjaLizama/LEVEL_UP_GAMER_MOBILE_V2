@@ -12,12 +12,14 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.levelup.levelupgamer.viewmodel.carrito.CarritoViewModel
 
 import com.levelup.levelupgamer.viewmodel.productos.ProductListViewModel
 
 @Composable
-fun ProductScreen(listViewModel: ProductListViewModel = viewModel()) {
+fun ProductScreen(listViewModel: ProductListViewModel = hiltViewModel(),carritoViewModel: CarritoViewModel = hiltViewModel()) {
     val uiState by listViewModel.uiState.collectAsState()
 
     when {
@@ -40,7 +42,7 @@ fun ProductScreen(listViewModel: ProductListViewModel = viewModel()) {
                         producto = producto,
                         onClick = {
                             listViewModel.onProductoClicked(producto.id)
-                        }, onAddToCart = { listViewModel.onProductoClicked(producto.id) }
+                        }, onAddToCart = { carritoViewModel.agregarAlCarrito(producto.id) }
 
 
                     )
