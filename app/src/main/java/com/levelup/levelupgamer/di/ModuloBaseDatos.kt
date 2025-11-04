@@ -18,7 +18,6 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object ModuloBaseDatos {
 
-    // Esto le dice a Hilt como crear la instancia de la base de datos.
     @Provides
     @Singleton
     fun proveerBaseDatos(
@@ -33,7 +32,6 @@ object ModuloBaseDatos {
         ).fallbackToDestructiveMigration().addCallback(callback).build()
     }
 
-    // Esto se encarga de proveer el DAO
     @Provides
     @Singleton
     fun proveerUsuarioDAO(basedatos: BaseDatos): UsuarioDAO {

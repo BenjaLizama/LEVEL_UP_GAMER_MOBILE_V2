@@ -19,7 +19,7 @@ import com.levelup.levelupgamer.db.entidades.Carrito
         ProductoCategoria::class,
         Carrito::class
     ],
-    version = 7
+    version = 11
 )
 
 abstract class BaseDatos : RoomDatabase() {
