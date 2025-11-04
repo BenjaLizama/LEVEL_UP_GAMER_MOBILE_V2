@@ -10,7 +10,7 @@ import javax.inject.Inject
 class CarritoRepository @Inject constructor(private val carritoDAO: CarritoDAO) {
 
     suspend fun agregarProductoAlCarrito(idProducto: Long, idUsuario: Long) {
-        val itemExiste = carritoDAO.obtenerItem( idUsuario,idProducto)
+        val itemExiste = carritoDAO.obtenerItem(idUsuario, idProducto)
 
         if (itemExiste == null) {
             val nuevoItem = Carrito(
@@ -28,6 +28,7 @@ class CarritoRepository @Inject constructor(private val carritoDAO: CarritoDAO) 
     fun getItemsDelCarritoConDetalles(idusuario: Long): Flow<List<CarritoItemConDetalles>> {
         return carritoDAO.getItemsDelCarritoConDetalles(idusuario)
     }
+
     suspend fun disminuirProductoDelCarrito(idProducto: Long, idUsuario: Long) {
         // Revisa el item
         val itemExistente = carritoDAO.obtenerItem(idUsuario, idProducto)
@@ -44,6 +45,10 @@ class CarritoRepository @Inject constructor(private val carritoDAO: CarritoDAO) 
 
     suspend fun eliminarProductoDelCarrito(idProducto: Long, idUsuario: Long) {
         carritoDAO.eliminarItem(idProducto, idUsuario)
+    }
+
+    suspend fun vaciarCarritoDelUsuario(idUsuario: Long) {
+        carritoDAO.vaciarCarrito(idUsuario)
     }
 
 }

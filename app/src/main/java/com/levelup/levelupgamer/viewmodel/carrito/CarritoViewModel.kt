@@ -29,6 +29,9 @@ class CarritoViewModel @Inject constructor(
 ) : ViewModel() {
     private val idUsuarioFlow: Flow<Long> = preferenciasUsuarioRepository.idUsuario
 
+    private val _eventFlow = MutableSharedFlow<String>()
+
+    val eventFlow = _eventFlow.asSharedFlow()
     private val _events = MutableSharedFlow<CarritoEvent>(
         extraBufferCapacity = 1,
         onBufferOverflow = BufferOverflow.DROP_OLDEST
@@ -53,7 +56,8 @@ class CarritoViewModel @Inject constructor(
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
-        initialValue = CartUiState(isLoading = true))
+        initialValue = CartUiState(isLoading = true)
+    )
 
     fun agregarAlCarrito(idProducto: Long) {
         viewModelScope.launch {
@@ -81,6 +85,18 @@ class CarritoViewModel @Inject constructor(
             val idUsuario = idUsuarioFlow.first()
             if (idUsuario != 0L) {
                 carritoRepository.eliminarProductoDelCarrito(idProducto, idUsuario)
+            }
+        }
+    }
+
+    fun onProcederAlPago() {
+        viewModelScope.launch {
+            val idUsuario = idUsuarioFlow.first()
+            if (idUsuario != 0L) {
+                carritoRepository.vaciarCarritoDelUsuario(idUsuario)
+                _eventFlow.emit("¡Pago realizado con éxito!")
+
+
             }
         }
     }
