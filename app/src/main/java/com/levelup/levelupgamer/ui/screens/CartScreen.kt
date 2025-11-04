@@ -1,8 +1,6 @@
 package com.levelup.levelupgamer.ui.screens
 
-
-
-
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,12 +28,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.modifier.modifierLocalOf
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
@@ -43,18 +42,27 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.levelup.levelupgamer.db.entidades.CarritoItemConDetalles
+import com.levelup.levelupgamer.ui.theme.ColorFondo
 
 import com.levelup.levelupgamer.viewmodel.carrito.CarritoViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CartScreen( navController: NavHostController,viewModel: CarritoViewModel = hiltViewModel()) {
-
     val uiState by viewModel.uiState.collectAsState()
-    Scaffold(topBar = { TopAppBar(title = { Text("Carrito") }) }) { padding ->
+    Scaffold(topBar = {
+        TopAppBar(
+            colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = ColorFondo,
+                titleContentColor = Color.White
+            ),
+            title = { Text("Carrito") }
+        )
+    }) { padding ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
+                .background(ColorFondo)
                 .padding(padding)
         ) {
             when {
@@ -82,11 +90,9 @@ fun CartScreen( navController: NavHostController,viewModel: CarritoViewModel = h
                         items = uiState.products,
                         onIncrease = { productoId -> viewModel.agregarAlCarrito(productoId) },
                         onDecrease = { productoId ->
-                            // ¡NECESITAREMOS AÑADIR ESTA FUNCIÓN!
                             viewModel.disminuirCantidad(productoId)
                         },
                         onRemove = { productoId ->
-                            // ¡NECESITAREMOS AÑADIR ESTA FUNCIÓN!
                             viewModel.eliminarDelCarrito(productoId)
                         }
                     )
