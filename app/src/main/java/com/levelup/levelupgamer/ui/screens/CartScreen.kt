@@ -26,12 +26,16 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -39,10 +43,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.levelup.levelupgamer.db.entidades.CarritoItemConDetalles
 import com.levelup.levelupgamer.ui.theme.ColorFondo
+import com.levelup.levelupgamer.utils.formatPriceToCLP
 
 import com.levelup.levelupgamer.viewmodel.carrito.CarritoViewModel
 
@@ -50,6 +56,15 @@ import com.levelup.levelupgamer.viewmodel.carrito.CarritoViewModel
 @Composable
 fun CartScreen( navController: NavHostController,viewModel: CarritoViewModel = hiltViewModel()) {
     val uiState by viewModel.uiState.collectAsState()
+
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(Unit) {
+        viewModel.eventFlow.collect { message ->
+
+            snackbarHostState.showSnackbar(message)
+        }}
+
     Scaffold(topBar = {
         TopAppBar(
             colors = TopAppBarDefaults.topAppBarColors(
@@ -58,7 +73,8 @@ fun CartScreen( navController: NavHostController,viewModel: CarritoViewModel = h
             ),
             title = { Text("Carrito") }
         )
-    }) { padding ->
+    },snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
+    ) { padding ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -94,7 +110,8 @@ fun CartScreen( navController: NavHostController,viewModel: CarritoViewModel = h
                         },
                         onRemove = { productoId ->
                             viewModel.eliminarDelCarrito(productoId)
-                        }
+                        },
+                                onCheckoutClicked = { viewModel.onProcederAlPago() }
                     )
                 }
             }
@@ -108,7 +125,8 @@ fun CartContent(
     items: List<CarritoItemConDetalles>,
     onIncrease: (Long) -> Unit,
     onDecrease: (Long) -> Unit,
-    onRemove: (Long) -> Unit
+    onRemove: (Long) -> Unit,
+    onCheckoutClicked: () -> Unit
 ) {
     val total = items.sumOf { it.producto.precio * it.cantidad }
     Column(modifier = Modifier.fillMaxSize()) {
@@ -132,14 +150,15 @@ fun CartContent(
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            val totalClp = formatPriceToCLP(total)
             Text(
-                text = "Total: $${String.format("%.2f", total)}",
+                text = "Total: ${totalClp} CLP",
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold
             )
             Spacer(Modifier.height(16.dp))
             Button(
-                onClick = { /* TODO: Ir a la pantalla de pago */ },
+                onClick = onCheckoutClicked,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Proceder al Pago")
@@ -168,9 +187,10 @@ fun CartItemCard(
                     .padding(end = 8.dp)
             )
             Column(modifier = Modifier.weight(1f)) {
+                val preioClp = formatPriceToCLP(item.producto.precio)
                 Text(item.producto.nombre, style = MaterialTheme.typography.titleMedium)
                 Text(
-                    "$${item.producto.precio}",
+                    "${preioClp} CLP",
                     style = MaterialTheme.typography.bodyMedium
                 )
             }

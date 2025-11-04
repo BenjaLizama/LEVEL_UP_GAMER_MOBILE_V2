@@ -46,4 +46,6 @@ interface CarritoDAO {
     @Query("DELETE FROM TABLA_CARRITO WHERE idProducto = :idProducto AND idUsuario = :idUsuario")
     suspend fun eliminarItem(idProducto: Long, idUsuario: Long)
 
+    @Query("DELETE FROM TABLA_CARRITO WHERE idUsuario = :idUsuario")
+    suspend fun vaciarCarrito(idUsuario: Long)
 }

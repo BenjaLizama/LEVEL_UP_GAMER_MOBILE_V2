@@ -21,6 +21,7 @@ import coil.compose.AsyncImage
 import com.levelup.levelupgamer.db.entidades.Producto
 import com.levelup.levelupgamer.ui.theme.ColorAcento
 import com.levelup.levelupgamer.ui.theme.ColorTextoPrincipal
+import com.levelup.levelupgamer.utils.formatPriceToCLP
 
 
 @Composable
@@ -49,8 +50,8 @@ fun ProcductoCard(producto: Producto, onClick: () -> Unit,onAddToCart: () -> Uni
                 )
 
                 Spacer(modifier = Modifier.height(4.dp))
-
-                Text(text = producto.precio.toString(), style = MaterialTheme.typography.bodyLarge)
+                val precioClp = formatPriceToCLP(producto.precio)
+                Text(text = precioClp, style = MaterialTheme.typography.bodyLarge)
                 Button(
                     onClick = { onAddToCart() },
                     modifier = Modifier.fillMaxWidth()
