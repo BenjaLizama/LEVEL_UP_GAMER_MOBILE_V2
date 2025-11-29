@@ -1,23 +1,15 @@
 package com.levelup.levelupgamer.viewmodel.autenticacion
 
-import android.text.format.DateFormat
 import android.util.Patterns
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.levelup.levelupgamer.data.PreferenciasUsuarioRepository
-import com.levelup.levelupgamer.db.entidades.Usuario
 import com.levelup.levelupgamer.db.repository.UsuarioRepository
-import com.levelup.levelupgamer.model.usuarios.CrearUsuarioDTO
-import com.levelup.levelupgamer.repository.usuarios.PostUsuarios
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
-import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -30,87 +22,15 @@ class AutenticacionViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(EstadoFormularioUI())
     val uiState: StateFlow<EstadoFormularioUI> = _uiState.asStateFlow()
 
-    // Repositorio de usuarios
-    private val postUsuariosRepository = PostUsuarios()
 
     val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
 
     fun crearCuenta() {
-        viewModelScope.launch {
-            try {
-                val estado = uiState.value
 
-                // 1. Asignar el resultado de parse() directamente y usar !!
-                // Esto le dice al compilador: "Estoy seguro de que esto no es null".
-                // Si el parseo falla (ParseException), el catch lo atrapa.
-                // Si devuelve null (depende de la implementación, pero es raro), lanza NPE que el catch también atrapa.
-                val fechaDate = formatter.parse("2000-08-08")!!
-
-                val usuarioCreado = CrearUsuarioDTO(
-                    correo = estado.correo,
-                    contrasena = estado.contrasena,
-                    nombre = estado.nombre,
-                    apellido = estado.apellido,
-                    fechaNacimiento = fechaDate, // Asignación de Date no nula
-                    nombreUsuario = estado.nombre + estado.apellido
-                )
-
-                val usuarioRetorno = postUsuariosRepository.crearUsuario(usuarioCreado)
-
-                if (usuarioRetorno == null) {
-                    // Es mejor lanzar una excepción para ser capturada en lugar de un Error
-                    throw Exception("Error al crear el usuario en el servidor.")
-                }
-
-                print("Usuario ${usuarioRetorno.nombre} creado con exito!")
-
-            } catch (e: Exception) {
-                _uiState.update { it.copy(mensajeError = "Error al crear la cuenta. Detalles: ${e.message}") }
-            } finally {
-                _uiState.update { it.copy(isLoading = false) }
-            }
-        }
     }
 
     fun iniciarSesion() {
-        viewModelScope.launch {
-            try {
 
-                val estado = _uiState.value
-                _uiState.update { it.copy(isLoading = true) }
-
-                if (!validarFormularioInicio()) {
-                    _uiState.update { it.copy(
-                        mensajeError = "Por favor, corrige los errores en el formulario."
-                    ) }
-                    return@launch
-                }
-
-                val usuarioValidado = usuarioRepository.validarCredenciales(estado.correoInicio, estado.contrasenaInicio)
-
-                if (usuarioValidado == null) {
-                    _uiState.update { it.copy(
-                        mensajeError = "La contraseña o el correo son incorrectos."
-                    ) }
-                    return@launch
-                }
-                preferenciasRepository.guardarIdUsuario(usuarioValidado.idUsuario)
-                preferenciasRepository.guardarNombreUsuario(usuarioValidado.nombre)
-                preferenciasRepository.guardarApellidoUsuario(usuarioValidado.apellido)
-                preferenciasRepository.guardarCorreoUsuario(usuarioValidado.correo)
-                preferenciasRepository.guardarEstadoLogueado(true)
-
-
-
-                delay(2500L)
-                _inicioExitoso.value = true
-
-            } catch (e: kotlin.Exception) {
-                _uiState.update { it.copy(mensajeError = "Error al iniciar sesion.") }
-            } finally {
-                _uiState.update { it.copy(isLoading = false) }
-            }
-        }
     }
 
     fun validarFormulario(): Boolean {
