@@ -20,7 +20,7 @@ import androidx.room.PrimaryKey
         ),
         ForeignKey(
             entity = Usuario::class,
-            // Esta es la PK de tu 'Usuario.kt' (¡Correcto!)
+            // Esta es la PK de tu 'UsuarioRetornoDTO.kt' (¡Correcto!)
             parentColumns = ["idUsuario"],
             // Esta es la FK de tu 'Carrito.kt' (¡Correcto!)
             childColumns = ["idUsuario"],

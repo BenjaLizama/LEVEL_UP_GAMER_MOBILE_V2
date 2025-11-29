@@ -1,14 +1,16 @@
-package com.levelup.levelupgamer.remote
+package com.levelup.levelupgamer.model
 
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitInstance {
-    val api: ProductoApiService by lazy {
+
+    val api: ApiService by lazy {
         Retrofit.Builder()
-            .baseUrl("http://localhost:8082/api/productos")
+            .baseUrl("http://192.168.100.13:8083/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-            .create(ProductoApiService::class.java)
+            .create(ApiService::class.java)
     }
+
 }

@@ -1,11 +1,14 @@
 package com.levelup.levelupgamer.viewmodel.autenticacion
 
+import android.text.format.DateFormat
 import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.levelup.levelupgamer.data.PreferenciasUsuarioRepository
 import com.levelup.levelupgamer.db.entidades.Usuario
 import com.levelup.levelupgamer.db.repository.UsuarioRepository
+import com.levelup.levelupgamer.model.usuarios.CrearUsuarioDTO
+import com.levelup.levelupgamer.repository.usuarios.PostUsuarios
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.delay
@@ -15,6 +18,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.lang.Exception
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 @HiltViewModel
 class AutenticacionViewModel @Inject constructor(
@@ -25,51 +30,42 @@ class AutenticacionViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(EstadoFormularioUI())
     val uiState: StateFlow<EstadoFormularioUI> = _uiState.asStateFlow()
 
+    // Repositorio de usuarios
+    private val postUsuariosRepository = PostUsuarios()
+
+    val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
 
     fun crearCuenta() {
         viewModelScope.launch {
             try {
+                val estado = uiState.value
 
-                val estado = _uiState.value
-                _uiState.update { it.copy(isLoading = true) }
+                // 1. Asignar el resultado de parse() directamente y usar !!
+                // Esto le dice al compilador: "Estoy seguro de que esto no es null".
+                // Si el parseo falla (ParseException), el catch lo atrapa.
+                // Si devuelve null (depende de la implementación, pero es raro), lanza NPE que el catch también atrapa.
+                val fechaDate = formatter.parse("2000-08-08")!!
 
-                if (!validarFormulario()) {
-                    _uiState.update { it.copy(mensajeError = "Por favor, corrige los errores en el formulario.") }
-                    return@launch
-                }
-
-                val existe = usuarioRepository.buscarUsuarioPorCorreo(estado.correo)
-
-                if (existe) {
-                    _uiState.update { it.copy(isLoading = false) }
-                    _uiState.update { it.copy(mensajeError = "El correo ya esta registrado.") }
-                    return@launch
-                }
-
-
-                val nuevoUsuario = Usuario(
-                    idUsuario = 0L,
+                val usuarioCreado = CrearUsuarioDTO(
+                    correo = estado.correo,
+                    contrasena = estado.contrasena,
                     nombre = estado.nombre,
                     apellido = estado.apellido,
-                    correo = estado.correo,
-                    contrasena = estado.contrasena
+                    fechaNacimiento = fechaDate, // Asignación de Date no nula
+                    nombreUsuario = estado.nombre + estado.apellido
                 )
-                //capturo el id del usuario para cuando se registra
-                val nuevoIdGenerado = usuarioRepository.crearCuenta(nuevoUsuario)
-                preferenciasRepository.guardarIdUsuario(nuevoIdGenerado)
 
-                usuarioRepository.crearCuenta(nuevoUsuario)
-                preferenciasRepository.guardarNombreUsuario(nuevoUsuario.nombre)
-                preferenciasRepository.guardarApellidoUsuario(nuevoUsuario.apellido)
-                preferenciasRepository.guardarCorreoUsuario(nuevoUsuario.correo)
-                preferenciasRepository.guardarEstadoLogueado(true)
+                val usuarioRetorno = postUsuariosRepository.crearUsuario(usuarioCreado)
 
+                if (usuarioRetorno == null) {
+                    // Es mejor lanzar una excepción para ser capturada en lugar de un Error
+                    throw Exception("Error al crear el usuario en el servidor.")
+                }
 
-                delay(2500L)
-                _creacionExitosa.value = true
+                print("Usuario ${usuarioRetorno.nombre} creado con exito!")
 
             } catch (e: Exception) {
-                _uiState.update { it.copy(mensajeError = "Error al crear la cuenta.") }
+                _uiState.update { it.copy(mensajeError = "Error al crear la cuenta. Detalles: ${e.message}") }
             } finally {
                 _uiState.update { it.copy(isLoading = false) }
             }
