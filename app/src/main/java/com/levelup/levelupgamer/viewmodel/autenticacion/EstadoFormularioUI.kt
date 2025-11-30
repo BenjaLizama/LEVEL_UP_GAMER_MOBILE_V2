@@ -1,7 +1,6 @@
 package com.levelup.levelupgamer.viewmodel.autenticacion
 
 data class EstadoFormularioUI(
-    // Entradas
     val nombre: String = "",
     val apellido: String = "",
     val correo: String = "",
@@ -11,7 +10,6 @@ data class EstadoFormularioUI(
     val correoInicio: String = "",
     val contrasenaInicio: String = "",
 
-    // Errores
     val nombreError: String? = null,
     val apellidoError: String? = null,
     val correoError: String? = null,
@@ -21,9 +19,9 @@ data class EstadoFormularioUI(
     val correoErrorInicio: String? = null,
     val contrasenaErrorInicio: String? = null,
 
-    // Estados globales
     val isLoading: Boolean = false,
     val creacionExitosa: Boolean = false,
     val inicioExitoso: Boolean = false,
+
     val mensajeError: String? = null
 )

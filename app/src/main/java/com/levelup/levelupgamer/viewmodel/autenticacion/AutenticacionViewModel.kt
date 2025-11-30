@@ -4,7 +4,6 @@ import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.levelup.levelupgamer.data.PreferenciasUsuarioRepository
-import com.levelup.levelupgamer.db.repository.UsuarioRepository
 import com.levelup.levelupgamer.model.usuarios.AgregarUsuarioDTO
 import com.levelup.levelupgamer.model.usuarios.IniciarSesionDTO
 import com.levelup.levelupgamer.repository.UserRepository
@@ -25,12 +24,26 @@ class AutenticacionViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(EstadoFormularioUI())
     val uiState: StateFlow<EstadoFormularioUI> = _uiState.asStateFlow()
 
+    private val _creacionExitosa = MutableStateFlow(false)
+    val creacionExitosa: StateFlow<Boolean> = _creacionExitosa.asStateFlow()
+
+    private val _inicioExitoso = MutableStateFlow(false)
+    val inicioExitoso: StateFlow<Boolean> = _inicioExitoso.asStateFlow()
+
     fun crearCuenta() {
+        _uiState.update {
+            it.copy(
+                mensajeError = null,
+                isLoading = true
+            )
+        }
+
         viewModelScope.launch {
             val estado = uiState.value
 
             if (!validarFormulario()) {
                 println("Debes revisar los campos antes de continuar")
+                _uiState.update { it.copy(isLoading = false) }
                 return@launch
             }
 
@@ -45,6 +58,8 @@ class AutenticacionViewModel @Inject constructor(
 
             val resultado = userRepository.agregarUsuario(usuarioAgregado)
 
+            _uiState.update { it.copy(isLoading = false) }
+
             if (resultado != null) {
                 println("Usuario creado con exito: ${estado.nombre}")
                 preferenciasRepository.guardarIdUsuario(resultado.idUsuario)
@@ -57,16 +72,29 @@ class AutenticacionViewModel @Inject constructor(
                 _creacionExitosa.value = true
             } else {
                 println("Fallo la creacion del usuario: ${estado.nombre}")
+                _uiState.update {
+                    it.copy(
+                        mensajeError = "Conflicto al crear el usuario, el correo ya se encuentra registrado."
+                    )
+                }
             }
         }
     }
 
     fun iniciarSesion() {
+        _uiState.update {
+            it.copy(
+                mensajeError = null,
+                isLoading = true
+            )
+        }
+
         viewModelScope.launch {
             val estado = uiState.value
 
             if (!validarFormularioInicio()) {
                 println("Error al iniciar sesion")
+                _uiState.update { it.copy(isLoading = false) }
                 return@launch
             }
 
@@ -76,6 +104,8 @@ class AutenticacionViewModel @Inject constructor(
             )
 
             val resultado = userRepository.iniciarSesion(credenciales)
+
+            _uiState.update { it.copy(isLoading = false) }
 
             if (resultado != null) {
                 println("Usuario logeado con exito!")
@@ -87,12 +117,18 @@ class AutenticacionViewModel @Inject constructor(
                 preferenciasRepository.guardarImagenPerfil(resultado.imagenPerfilURL)
                 preferenciasRepository.guardarEstadoLogueado(true)
 
-                _creacionExitosa.value = true
+                _inicioExitoso.value = true
             } else {
                 println("Fallo al iniciar sesion")
+                _uiState.update {
+                    it.copy(
+                        mensajeError = "Correo o contraseña incorrectos"
+                    )
+                }
             }
         }
     }
+
 
     fun validarFormulario(): Boolean {
         _uiState.update {
@@ -123,7 +159,6 @@ class AutenticacionViewModel @Inject constructor(
             esValido = false
         }
 
-
         return esValido
     }
 
@@ -149,6 +184,7 @@ class AutenticacionViewModel @Inject constructor(
 
         return esValido
     }
+
 
     fun actualizarNombre(nuevoNombre: String) {
         _uiState.update {
@@ -207,12 +243,4 @@ class AutenticacionViewModel @Inject constructor(
     fun actualizarContrasenaInicio(nuevaContrasena: String) {
         _uiState.update { it.copy(contrasenaInicio = nuevaContrasena) }
     }
-
-    private val _creacionExitosa =
-        MutableStateFlow(false) // => Almacena el valor y emite actualizaciones
-    val creacionExitosa: StateFlow<Boolean> = _creacionExitosa.asStateFlow() // => Expone StateFlow publico para la UI
-
-    private val _inicioExitoso = MutableStateFlow(false)
-    val inicioExitoso: StateFlow<Boolean> = _inicioExitoso.asStateFlow()
-
 }
