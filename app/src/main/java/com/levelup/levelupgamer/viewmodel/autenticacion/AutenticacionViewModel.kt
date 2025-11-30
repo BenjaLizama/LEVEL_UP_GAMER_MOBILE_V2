@@ -2,35 +2,96 @@ package com.levelup.levelupgamer.viewmodel.autenticacion
 
 import android.util.Patterns
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.levelup.levelupgamer.data.PreferenciasUsuarioRepository
 import com.levelup.levelupgamer.db.repository.UsuarioRepository
+import com.levelup.levelupgamer.model.usuarios.AgregarUsuarioDTO
+import com.levelup.levelupgamer.model.usuarios.IniciarSesionDTO
+import com.levelup.levelupgamer.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import java.text.SimpleDateFormat
-import java.util.Locale
+import kotlinx.coroutines.launch
 
 @HiltViewModel
 class AutenticacionViewModel @Inject constructor(
-    private val usuarioRepository: UsuarioRepository,
-    private val preferenciasRepository: PreferenciasUsuarioRepository
+    private val preferenciasRepository: PreferenciasUsuarioRepository,
+    private val userRepository: UserRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(EstadoFormularioUI())
     val uiState: StateFlow<EstadoFormularioUI> = _uiState.asStateFlow()
 
-
-    val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-
     fun crearCuenta() {
+        viewModelScope.launch {
+            val estado = uiState.value
 
+            if (!validarFormulario()) {
+                println("Debes revisar los campos antes de continuar")
+                return@launch
+            }
+
+            val usuarioAgregado = AgregarUsuarioDTO(
+                correo = estado.correo,
+                contrasena = estado.contrasena,
+                nombre = estado.nombre,
+                apellido = estado.apellido,
+                fechaNacimiento = "2000-05-05",
+                nombreUsuario = estado.nombre + estado.apellido
+            )
+
+            val resultado = userRepository.agregarUsuario(usuarioAgregado)
+
+            if (resultado != null) {
+                println("Usuario creado con exito: ${estado.nombre}")
+                preferenciasRepository.guardarIdUsuario(resultado.idUsuario)
+                preferenciasRepository.guardarNombreUsuario(resultado.nombre)
+                preferenciasRepository.guardarApellidoUsuario(resultado.apellido)
+                preferenciasRepository.guardarCorreoUsuario(resultado.correo)
+                preferenciasRepository.guardarEstadoLogueado(true)
+                preferenciasRepository.guardarImagenPerfil(resultado.imagenPerfilURL)
+
+                _creacionExitosa.value = true
+            } else {
+                println("Fallo la creacion del usuario: ${estado.nombre}")
+            }
+        }
     }
 
     fun iniciarSesion() {
+        viewModelScope.launch {
+            val estado = uiState.value
 
+            if (!validarFormularioInicio()) {
+                println("Error al iniciar sesion")
+                return@launch
+            }
+
+            val credenciales = IniciarSesionDTO(
+                correo = estado.correoInicio,
+                contrasena = estado.contrasenaInicio
+            )
+
+            val resultado = userRepository.iniciarSesion(credenciales)
+
+            if (resultado != null) {
+                println("Usuario logeado con exito!")
+
+                preferenciasRepository.guardarIdUsuario(resultado.idUsuario)
+                preferenciasRepository.guardarNombreUsuario(resultado.nombre)
+                preferenciasRepository.guardarApellidoUsuario(resultado.apellido)
+                preferenciasRepository.guardarCorreoUsuario(resultado.correo)
+                preferenciasRepository.guardarImagenPerfil(resultado.imagenPerfilURL)
+                preferenciasRepository.guardarEstadoLogueado(true)
+
+                _creacionExitosa.value = true
+            } else {
+                println("Fallo al iniciar sesion")
+            }
+        }
     }
 
     fun validarFormulario(): Boolean {

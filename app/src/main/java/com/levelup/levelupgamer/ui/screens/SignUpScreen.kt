@@ -56,7 +56,6 @@ fun SignUpScreen(
 
     val estado by autenticacionViewModel.uiState.collectAsState()
 
-    val isLoading = estado.isLoading
     val mensajeError = estado.mensajeError
     val nombre = estado.nombre
     val nombreError = estado.nombreError

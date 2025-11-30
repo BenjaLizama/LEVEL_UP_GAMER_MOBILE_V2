@@ -123,7 +123,12 @@ fun ProfileScreen(
                 )
             ) {
                 item {
-                    UserProfile(nombre, apellido, correo, imagen, onImagenClick = {
+                    UserProfile(
+                        nombre,
+                        apellido,
+                        correo,
+                        imagen,
+                        onImagenClick = {
                         viewModel.setMostrarDialogoImagen(true)
                     })
                 }

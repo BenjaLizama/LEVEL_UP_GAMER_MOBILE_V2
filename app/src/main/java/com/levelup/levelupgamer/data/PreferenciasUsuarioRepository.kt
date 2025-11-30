@@ -51,16 +51,18 @@ class PreferenciasUsuarioRepository @Inject constructor(
         }
     }
 
-    suspend fun guardarImagenPerfil(imagenPefil: String) {
+    suspend fun guardarImagenPerfil(imagenPefil: String?) {
         dataStore.edit { preferencias ->
-            preferencias[LlavesPreferencia.IMAGEN_PERFIL] = imagenPefil
+            preferencias[LlavesPreferencia.IMAGEN_PERFIL] = imagenPefil ?: ""
         }
     }
+
     suspend fun guardarIdUsuario(id: Long) {
         dataStore.edit { preferencias ->
             preferencias[LlavesPreferencia.ID_USUARIO] = id
         }
     }
+
     suspend fun limpiarDatos() {
         dataStore.edit { preferencias ->
             preferencias.clear()

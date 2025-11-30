@@ -37,8 +37,6 @@ class ProfileViewModel @Inject constructor(
     private val _mostrarDialogoImagen = MutableStateFlow(false)
     val mostrarDialogoImagen: StateFlow<Boolean> = _mostrarDialogoImagen.asStateFlow()
 
-    private val _imagenUri = MutableStateFlow<Uri?>(null)
-
     fun setMostrarDialogoImagen(mostrar: Boolean) {
         _mostrarDialogoImagen.value = mostrar
     }
