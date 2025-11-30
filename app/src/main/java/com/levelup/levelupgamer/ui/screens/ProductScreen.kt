@@ -2,7 +2,7 @@ package com.levelup.levelupgamer.ui.screens
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.Box
-import com.levelup.levelupgamer.ui.components.organisms.ProcductoCard
+import com.levelup.levelupgamer.ui.components.organisms.ProductoCard
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -49,7 +49,7 @@ fun ProductScreen(listViewModel: ProductListViewModel = hiltViewModel(),carritoV
         else -> {
             LazyColumn(modifier = Modifier.fillMaxSize()) {
                 items(items = uiState.productos, key = { it.id }) { producto ->
-                    ProcductoCard(
+                    ProductoCard(
                         producto = producto,
                         onClick = {
                             listViewModel.onProductoClicked(producto.id)

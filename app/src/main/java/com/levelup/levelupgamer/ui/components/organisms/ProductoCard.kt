@@ -1,22 +1,35 @@
 package com.levelup.levelupgamer.ui.components.organisms
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.levelup.levelupgamer.db.entidades.Producto
 import com.levelup.levelupgamer.ui.theme.ColorAcento
@@ -25,48 +38,112 @@ import com.levelup.levelupgamer.utils.formatPriceToCLP
 
 
 @Composable
-fun ProcductoCard(producto: Producto, onClick: () -> Unit,onAddToCart: () -> Unit, modifier: Modifier = Modifier) {
+fun ProductoCard(producto: Producto, onClick: () -> Unit, onAddToCart: () -> Unit, modifier: Modifier = Modifier) {
+    val CardBackgroundColor = Color(0xFF1F1F1F)
+
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 40.dp, vertical = 20.dp)
-            .clickable { onClick() }
+            .padding(horizontal = 15.dp, vertical = 8.dp)
+            .height(130.dp)
+            .clickable { onClick() },
+        shape = RoundedCornerShape(8.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = CardBackgroundColor
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
-        Column {
+        Row(
+            modifier = Modifier
+                .padding(8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
 
-            AsyncImage(
-                model = producto.imagenURL, contentDescription = null,
+            Box(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(180.dp),
-                contentScale = ContentScale.Crop
-
-            )
-            Column(modifier = modifier.padding(15.dp)) {
-                Text(
-                    text = producto.nombre,
-                    style = MaterialTheme.typography.titleMedium,
-                    maxLines = 1
+                    .size(110.dp)
+                    .clip(RoundedCornerShape(4.dp))
+                    .background(Color.White)
+            ) {
+                AsyncImage(
+                    model = producto.imagenURL,
+                    contentDescription = null,
+                    contentScale = ContentScale.Fit
                 )
+            }
 
-                Spacer(modifier = Modifier.height(4.dp))
-                val precioClp = formatPriceToCLP(producto.precio)
-                Text(text = precioClp, style = MaterialTheme.typography.bodyLarge)
+            Spacer(modifier = Modifier.width(16.dp))
+
+            Column(
+                modifier = Modifier.fillMaxHeight(),
+                verticalArrangement = Arrangement.SpaceBetween
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = producto.nombre,
+                        color = ColorTextoPrincipal,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    Text(
+                        text = producto.categoria,
+                        color = Color.LightGray.copy(alpha = 0.8f),
+                        fontSize = 14.sp
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+
+                    val precioClp = formatPriceToCLP(producto.precio)
+                    Text(
+                        text = precioClp,
+                        color = ColorAcento,
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.ExtraBold
+                    )
+                }
+
                 Button(
                     onClick = { onAddToCart() },
-                    modifier = Modifier.fillMaxWidth()
-                        .padding(20.dp)
-                        .height(50.dp),
+                    modifier = Modifier
+                        .width(150.dp)
+                        .height(35.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = ColorAcento
+                        containerColor = ColorAcento.copy(alpha = 0.8f)
                     ),
-                    shape = RoundedCornerShape(8.dp),
+                    shape = RoundedCornerShape(4.dp),
                 ) {
-                    Text(text = "Añadir al carrito", color = ColorTextoPrincipal)
+                    Text(
+                        text = "Añadir al carrito",
+                        color = ColorTextoPrincipal,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.SemiBold
+                    )
                 }
             }
         }
-
-
     }
+}
+
+@Preview
+@Composable
+fun ProductoCardPreview() {
+    val producto = Producto(
+        id = 1,
+        nombre = "Producto de prueba",
+        precio = 12999.0,
+        categoria = "Categoria",
+        imagenURL = "https://http2.mlstatic.com/D_NQ_NP_2X_746748-MLA95652415350_102025-F.webp",
+        descripcion = "Muy bueno el producto"
+    )
+
+    fun saludar(): String {
+        return "Hola"
+    }
+
+    ProductoCard(
+        producto = producto,
+        onClick = {saludar()},
+        onAddToCart = {saludar()}
+    )
 }
