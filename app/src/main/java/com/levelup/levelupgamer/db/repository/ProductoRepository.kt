@@ -1,19 +1,20 @@
 package com.levelup.levelupgamer.db.repository
 
-import com.levelup.levelupgamer.db.dao.ProductoDAO
-import com.levelup.levelupgamer.db.entidades.Producto
-import javax.inject.Inject
+import com.levelup.levelupgamer.model.productos.ProductoDto
+import com.levelup.levelupgamer.remote.ProductServiceApi
+import jakarta.inject.Inject
 
+class ProductoRepository @Inject constructor(
+    private val api: ProductServiceApi
+) {
 
-class ProductoRepository @Inject constructor(private val productoDao: ProductoDAO) {
+    suspend fun obtenerProductos(categoria: String): List<ProductoDto> {
+        return try {
 
-    suspend fun obtenerProductos(categoria: String): List<Producto> {
-        return productoDao.obtenerProductos(categoria)
-    }
-
-    suspend fun insertarProducto(producto: Producto) {
-        productoDao.insertarProducto(producto)
-
+            api.obtenerProductos()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            emptyList()
+        }
     }
 }
-

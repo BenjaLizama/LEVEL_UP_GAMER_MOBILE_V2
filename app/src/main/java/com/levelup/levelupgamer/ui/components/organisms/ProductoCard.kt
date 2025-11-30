@@ -31,15 +31,23 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.levelup.levelupgamer.db.entidades.Producto
+// import com.levelup.levelupgamer.db.entidades.Producto // <--- YA NO NECESITAS ESTO
+import com.levelup.levelupgamer.model.productos.ProductoDto
 import com.levelup.levelupgamer.ui.theme.ColorAcento
 import com.levelup.levelupgamer.ui.theme.ColorTextoPrincipal
 import com.levelup.levelupgamer.utils.formatPriceToCLP
 
-
 @Composable
-fun ProductoCard(producto: Producto, onClick: () -> Unit, onAddToCart: () -> Unit, modifier: Modifier = Modifier) {
+fun ProductoCard(
+    producto: ProductoDto, // ✅ Correcto, recibimos el DTO
+    onClick: () -> Unit,
+    onAddToCart: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     val CardBackgroundColor = Color(0xFF1F1F1F)
+
+    // LÓGICA DE IMAGEN: El DTO tiene una lista, sacamos la primera o dejamos vacío
+    val imagenParaMostrar = producto.imagenes?.firstOrNull() ?: ""
 
     Card(
         modifier = modifier
@@ -54,8 +62,7 @@ fun ProductoCard(producto: Producto, onClick: () -> Unit, onAddToCart: () -> Uni
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Row(
-            modifier = Modifier
-                .padding(8.dp),
+            modifier = Modifier.padding(8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
 
@@ -66,7 +73,7 @@ fun ProductoCard(producto: Producto, onClick: () -> Unit, onAddToCart: () -> Uni
                     .background(Color.White)
             ) {
                 AsyncImage(
-                    model = producto.imagenURL,
+                    model = imagenParaMostrar, // ✅ Usamos la variable que calculamos arriba
                     contentDescription = null,
                     contentScale = ContentScale.Fit
                 )
@@ -80,20 +87,26 @@ fun ProductoCard(producto: Producto, onClick: () -> Unit, onAddToCart: () -> Uni
             ) {
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = producto.nombre,
+                        text = producto.nombre, // ✅ CAMBIO: nombre -> nombreProducto
                         color = ColorTextoPrincipal,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
+
+                    // NOTA: Tu JSON de ejemplo NO tenía categoría.
+                    // Lo cambié a una descripción corta o puedes borrar este Text si prefieres.
                     Text(
-                        text = producto.categoria,
+                        text = producto.descripcion, // ✅ CAMBIO: Categoria -> descripcionProducto
                         color = Color.LightGray.copy(alpha = 0.8f),
-                        fontSize = 14.sp
+                        fontSize = 12.sp,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
                     )
                     Spacer(modifier = Modifier.height(4.dp))
 
+                    // ✅ CAMBIO: precio -> precioProducto
                     val precioClp = formatPriceToCLP(producto.precio)
                     Text(
                         text = precioClp,
@@ -125,25 +138,3 @@ fun ProductoCard(producto: Producto, onClick: () -> Unit, onAddToCart: () -> Uni
     }
 }
 
-@Preview
-@Composable
-fun ProductoCardPreview() {
-    val producto = Producto(
-        id = 1,
-        nombre = "Producto de prueba",
-        precio = 12999.0,
-        categoria = "Categoria",
-        imagenURL = "https://http2.mlstatic.com/D_NQ_NP_2X_746748-MLA95652415350_102025-F.webp",
-        descripcion = "Muy bueno el producto"
-    )
-
-    fun saludar(): String {
-        return "Hola"
-    }
-
-    ProductoCard(
-        producto = producto,
-        onClick = {saludar()},
-        onAddToCart = {saludar()}
-    )
-}
