@@ -17,4 +17,13 @@ class ProductoRepository @Inject constructor(
             emptyList()
         }
     }
-}
+    suspend fun buscarProducto(codigoProducto: String): ProductoDto? {
+        return try {
+            api.buscarProducto(codigoProducto)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+    }
+

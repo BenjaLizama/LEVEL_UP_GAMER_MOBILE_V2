@@ -53,6 +53,7 @@ fun CartScreen(
             }
         }
     }
+    LaunchedEffect(Unit) {viewModel.refrescarCarrito()}
 
     Scaffold(
         topBar = {
