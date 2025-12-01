@@ -100,5 +100,26 @@ dependencies {
     //mock
     testImplementation("io.mockk:mockk:1.13.8")
     //coroutines test
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1")
+
+    // Para simular el servidor HTTP
+    testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
+    // Para Coroutines en tests
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1")
+
+    // 1. Para las aserciones (assertEquals, assertTrue, etc.)
+    // Si usas Kotlin 1.3+ o superior, esta se incluye normalmente.
+    // Si no, añádela explícitamente:
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
+    testImplementation("org.jetbrains.kotlin:kotlin-test")
+
+    // 2. Para la librería de Simulación de Servidor (MockWebServer)
+    testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
+
+    // 3. Para OkHttp, que incluye MediaType y OkHttpClient (Retrofit lo necesita)
+    // Ya la tienes, pero asegurarte de que sea testImplementation para el test:
+    testImplementation("com.squareup.okhttp3:okhttp")
+
+    // 4. Para Coroutines (Si usas runTest)
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1")
 }

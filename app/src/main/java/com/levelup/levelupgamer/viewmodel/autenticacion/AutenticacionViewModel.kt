@@ -1,12 +1,13 @@
 package com.levelup.levelupgamer.viewmodel.autenticacion
 
-import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.levelup.levelupgamer.data.PreferenciasUsuarioRepository
 import com.levelup.levelupgamer.model.usuarios.AgregarUsuarioDTO
 import com.levelup.levelupgamer.model.usuarios.IniciarSesionDTO
 import com.levelup.levelupgamer.repository.UserRepository
+// 🚨 ELIMINAR ESTA IMPORTACIÓN: import android.util.Patterns
+import com.levelup.levelupgamer.utils.EmailValidator // 🚨 AÑADIDA: La nueva utilidad testeable
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -214,7 +215,8 @@ class AutenticacionViewModel @Inject constructor(
                 correo = nuevoCorreo,
                 correoError = when {
                     nuevoCorreo.trim().isBlank() -> "El correo no puede estar vacío."
-                    !Patterns.EMAIL_ADDRESS.matcher(nuevoCorreo).matches() -> "Formato de correo inválido."
+                    // 🔑 CAMBIO CLAVE: Usar la utilidad de Kotlin pura
+                    !EmailValidator.isValidEmail(nuevoCorreo) -> "Formato de correo inválido."
                     else -> null
                 }
             )
@@ -234,7 +236,8 @@ class AutenticacionViewModel @Inject constructor(
             correoInicio = nuevoCorreo,
             correoErrorInicio = when {
                 nuevoCorreo.trim().isBlank() -> "El correo no puede estar vacío."
-                !Patterns.EMAIL_ADDRESS.matcher(nuevoCorreo).matches() -> "Formato de correo inválido."
+                // 🔑 CAMBIO CLAVE: Usar la utilidad de Kotlin pura
+                !EmailValidator.isValidEmail(nuevoCorreo) -> "Formato de correo inválido."
                 else -> null
             }
         ) }
