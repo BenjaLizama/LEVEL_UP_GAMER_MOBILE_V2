@@ -109,6 +109,12 @@ class CarritoViewModel @Inject constructor(
             }
         }
     }
+    fun refrescarCarrito(){
+        if(currentUserId!=0L){
+            println("DEBUG:refrescando carrito")
+            cargarCarritoCompleto(currentUserId)
+        }
+    }
 
 
     fun agregarAlCarrito(codigoProducto: String) {

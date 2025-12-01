@@ -21,10 +21,10 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
 
-    private const val BASE_URL_USUARIOS = "http://192.168.1.105:8083/"
-    private const val BASE_URL_PRODUCTOS = "http://192.168.1.105:8082/"
+    private const val BASE_URL_USUARIOS = "http://192.168.1.107:8083/"
+    private const val BASE_URL_PRODUCTOS = "http://192.168.1.107:8082/"
 
-    private const val BASE_URL_CARRITO = "http://192.168.1.105:8081/"
+    private const val BASE_URL_CARRITO = "http://192.168.1.107:8081/"
 
     @Provides
     @Singleton
