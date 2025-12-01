@@ -101,4 +101,16 @@ dependencies {
     testImplementation("io.mockk:mockk:1.13.8")
     //coroutines test
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+
+    // DEPENDENCIAS DE PRUEBAS UNITARIAS (TESTING CORE)
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("io.mockk:mockk:1.13.8")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+
+    // Aserciones de Kotlin para usar 'assertTrue', 'assertEquals', etc.
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
+
+    // DEPENDENCIAS PARA TESTS DE INTEGRACIÓN (MOCKWEBSERVER)
+    testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
+    testImplementation("com.squareup.okhttp3:okhttp:4.12.0")
 }

@@ -15,7 +15,7 @@ import com.levelup.levelupgamer.viewmodel.autenticacion.AutenticacionViewModel
 fun NavGraphBuilder.authGraph(controladorNavegacion: NavHostController) {
 
     navigation(
-        startDestination = ROUTES.SIGN_UP,
+        startDestination = ROUTES.LOGIN,
         route = ROUTES.AUTENTICACION
     ) {
 
